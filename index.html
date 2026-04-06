@@ -124,7 +124,24 @@ body{
   <img src="https://picsum.photos/300?5">
   <img src="https://picsum.photos/300?6">
 </section>
+
+  
 <script>
+
+const uploadInput = document.getElementById("upload");
+const feed = document.querySelector(".feed");
+
+ // CARGAR IMÁGENES GUARDADAS
+window.addEventListener("DOMContentLoaded", ()=>{
+  const savedImages = JSON.parse(localStorage.getItem("gallery")) || [];
+
+  savedImages.forEach(src => {
+    const img = document.createElement("img");
+    img.src = src;
+    feed.appendChild(img);
+  });
+}); 
+
 function compressImage(file, callback){
   const reader = new FileReader();
 
@@ -157,6 +174,8 @@ function compressImage(file, callback){
 
 
 // USO EN TU UPLOAD
+
+  
 uploadInput.addEventListener("change", function(event){
   const file = event.target.files[0];
 
@@ -165,10 +184,20 @@ uploadInput.addEventListener("change", function(event){
     compressImage(file, function(imgSrc){
 
       // CREAR IMAGEN
-      const newImg = document.createElement("img");
-      newImg.src = imgSrc;
+const newImg = document.createElement("img");
+newImg.src = imgSrc;
 
-      feed.prepend(newImg);
+// animación
+newImg.style.opacity = "0";
+newImg.style.transform = "scale(0.95)";
+
+feed.prepend(newImg);
+
+setTimeout(()=>{
+  newImg.style.transition = ".3s ease";
+  newImg.style.opacity = "1";
+  newImg.style.transform = "scale(1)";
+},100);
 
       // GUARDAR
       let gallery = JSON.parse(localStorage.getItem("gallery")) || [];
