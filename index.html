@@ -163,12 +163,41 @@ body{
   font-size:25px;
   cursor:pointer;
 }
+.spinner{
+  width:50px;
+  height:50px;
+  border:3px solid rgba(255,255,255,0.1);
+  border-top:3px solid var(--gold);
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
 
+@keyframes spin{
+  0%{ transform:rotate(0deg);}
+  100%{ transform:rotate(360deg);}
+}
 </style>
 </head>
 
 <body>
+<div id="loaderUpload" style="
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.9);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  z-index:1000;
+">
 
+  <div class="spinner"></div>
+  <p style="margin-top:15px; opacity:.7;">Subiendo imagen...</p>
+
+</div>
 <!-- PROFILE -->
 <section class="profile">
   <img src="https://picsum.photos/200" alt="">
@@ -198,7 +227,16 @@ body{
     <span>Mensaje</span>
   </div>
 </section>
-
+<div style="text-align:center; padding:20px;">
+  <label class="btn">
+    Subir foto 📸
+    <input type="file" accept="image/*" capture="environment" id="upload" hidden>
+  </label>
+</div>
+  <div id="previewContainer" style="text-align:center; display:none;">
+  <p style="margin-bottom:10px;">Vista previa</p>
+  <img id="preview" style="width:150px; border-radius:10px;">
+</div>
 <!-- FEED -->
 <section class="feed">
   <img src="https://picsum.photos/300?1">
@@ -227,7 +265,7 @@ body{
   <img id="storyImg">
 </div>
 
-<script>
+
 const stories = [
   "https://picsum.photos/800/1400?1",
   "https://picsum.photos/800/1400?2",
@@ -243,7 +281,10 @@ function openStory(index){
 function closeStory(){
   document.getElementById("storyView").style.display="none";
 }
-</script>
+
+
+background: rgba(0,0,0,0.6);
+backdrop-filter: blur(8px);
 
 </body>
 </html>
