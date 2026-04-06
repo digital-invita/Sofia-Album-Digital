@@ -477,10 +477,9 @@ viewer.addEventListener("touchend", (e) => {
   const img = document.getElementById("viewerImg");
 
   // 🔥 SI ESTÁ EN ZOOM → detener drag
-  if(zoomed){
-    isDragging = false;
-    return;
-  }
+ if(zoomed){
+  isDragging = false;
+}
 
   isSwiping = false;
 
