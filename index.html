@@ -152,6 +152,9 @@ body{
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
+
+
+  
 // 🔥 CONFIG FIREBASE
 const firebaseConfig = {
   apiKey: "AIzaSyBQTeEhNmzK-zls5oe6sRAEyC05WBIYX40",
@@ -184,6 +187,8 @@ document.getElementById("closeViewer").onclick = function(){
   document.getElementById("viewer").style.display = "none";
 };
 
+const eventoID = "sofia-xv";
+
 // 📤 SUBIR IMAGEN
 uploadInput.addEventListener("change", async function(event){
   const file = event.target.files[0];
@@ -197,14 +202,15 @@ uploadInput.addEventListener("change", async function(event){
       await storageRef.put(file);
       const url = await storageRef.getDownloadURL();
 
-      console.log("URL:", url);
+      await db.collection("galeria")
+        .doc(eventoID)
+        .collection("fotos")
+        .add({
+          image: url,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
 
-      await db.collection("galeria").add({
-        image: url,
-        createdAt: new Date()
-      });
-
-      console.log("Guardado en Firestore");
+      console.log("Guardado en evento:", eventoID);
 
     } catch (error) {
       console.error("ERROR:", error);
@@ -212,43 +218,46 @@ uploadInput.addEventListener("change", async function(event){
   }
 });
 
+
 // 📥 CARGAR EN TIEMPO REAL
 window.addEventListener("DOMContentLoaded", () => {
 
   feed.innerHTML = "<p style='text-align:center'>Cargando fotos...</p>";
 
   db.collection("galeria")
-  .orderBy("createdAt","desc")
-  .onSnapshot(snapshot => {
+    .doc(eventoID)
+    .collection("fotos")
+    .orderBy("createdAt","desc")
+    .onSnapshot(snapshot => {
 
-    feed.innerHTML = "";
+      feed.innerHTML = "";
 
-    if(snapshot.empty){
-      feed.innerHTML = "<p style='text-align:center'>No hay fotos aún</p>";
-      return;
-    }
+      if(snapshot.empty){
+        feed.innerHTML = "<p style='text-align:center'>No hay fotos aún</p>";
+        return;
+      }
 
-    snapshot.forEach(doc => {
-      const data = doc.data();
+      snapshot.forEach(doc => {
+        const data = doc.data();
 
-      const img = document.createElement("img");
-      img.src = data.image;
+        const img = document.createElement("img");
+        img.src = data.image;
 
-      img.style.opacity = "0";
-      img.style.transform = "scale(0.95)";
+        img.style.opacity = "0";
+        img.style.transform = "scale(0.95)";
 
-      img.onclick = () => openViewer(data.image);
+        img.onclick = () => openViewer(data.image);
 
-      feed.appendChild(img);
+        feed.appendChild(img);
 
-      setTimeout(()=>{
-        img.style.transition = ".3s ease";
-        img.style.opacity = "1";
-        img.style.transform = "scale(1)";
-      },100);
+        setTimeout(()=>{
+          img.style.transition = ".3s ease";
+          img.style.opacity = "1";
+          img.style.transform = "scale(1)";
+        },100);
+      });
+
     });
-
-  });
 
 });
 </script>  
