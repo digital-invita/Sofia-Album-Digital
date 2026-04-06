@@ -161,7 +161,7 @@ body{
 .polaroid img {
   object-position: center;
   width: 100%;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
   border-radius: 6px;
 }
@@ -270,7 +270,6 @@ body{
     cursor:pointer;
   ">✕</span>
 
-  <!-- BOTONES -->
   <div class="nav left" onclick="prevImage()">‹</div>
   <div class="nav right" onclick="nextImage()">›</div>
 
@@ -279,7 +278,6 @@ body{
     max-height:90%;
     border-radius:10px;
   ">
-
 </div>
 <section class="profile">
   <img src="https://picsum.photos/200">
@@ -443,35 +441,36 @@ window.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      galleryImages = [];
+galleryImages = [];
 
-snapshot.forEach((doc, index) => {
+const docs = snapshot.docs;
+
+docs.forEach((doc, index) => {
   const data = doc.data();
 
   galleryImages.push(data.image);
-        const card = document.createElement("div");
-card.className = "polaroid";
 
-// rotación aleatoria
-card.style.setProperty('--random', Math.random());
+  const card = document.createElement("div");
+  card.className = "polaroid";
 
-const img = document.createElement("img");
-img.src = data.image;
+  card.style.setProperty('--random', Math.random());
 
-const name = document.createElement("p");
-name.textContent = data.name || "Invitado";
+  const img = document.createElement("img");
+  img.src = data.image;
 
-card.appendChild(img);
-card.appendChild(name);
+  const name = document.createElement("p");
+  name.textContent = data.name || "Invitado";
 
-card.onclick = () => {
-  currentIndex = index;
-  openViewer(data.image);
-};
+  card.appendChild(img);
+  card.appendChild(name);
 
-feed.appendChild(card);
+  card.onclick = () => {
+    currentIndex = index;
+    openViewer(data.image);
+  };
 
-
+  feed.appendChild(card);
+});
 
         
         
