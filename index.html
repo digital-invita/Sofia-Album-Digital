@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Valeria XV</title>
+<title>Álbum Digital</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
 
@@ -27,7 +27,7 @@ body{
   color:white;
 }
 
-/* PROFILE */
+/* PERFIL */
 .profile{
   text-align:center;
   padding:40px 20px;
@@ -44,200 +44,56 @@ body{
 .profile h1{
   font-family:'Playfair Display';
   margin-top:15px;
-  font-size:28px;
 }
 
 .profile p{
   opacity:.7;
-  margin-top:5px;
 }
-
-/* STORIES */
-.stories{
-  display:flex;
-  gap:15px;
-  overflow-x:auto;
-  padding:20px;
-}
-
-.story{
-  min-width:75px;
-  text-align:center;
-  cursor:pointer;
-}
-
-.story img{
-  width:70px;
-  height:70px;
-  border-radius:50%;
-  border:2px solid var(--gold);
-}
-
-.story span{
-  font-size:12px;
-  margin-top:5px;
-  display:block;
-}
-
 /* FEED */
 .feed{
   display:grid;
   grid-template-columns:repeat(3,1fr);
-  gap:5px;
-  padding:5px;
+  gap:6px;
+  padding:10px;
 }
 
 .feed img{
   width:100%;
   height:120px;
   object-fit:cover;
-  transition:.3s;
+  border-radius:8px;
+  transition:.3s ease;
 }
 
+/* efecto fino */
 .feed img:hover{
   transform:scale(1.05);
-  opacity:.8;
+  opacity:.85;
 }
 
-/* HIGHLIGHT */
-.highlight{
-  padding:30px 20px;
-}
-
-.highlight img{
-  width:100%;
-  border-radius:15px;
-}
-
-/* CTA */
-.cta{
+.upload-box{
   text-align:center;
-  padding:40px 20px;
-}
-
-.cta h2{
-  font-family:'Playfair Display';
-  margin-bottom:15px;
-}
-
-.btn{
-  display:inline-block;
-  margin:10px;
-  padding:12px 25px;
-  border-radius:30px;
-  border:1px solid var(--gold);
-  color:white;
-  text-decoration:none;
-  transition:.3s;
-}
-
-.btn:hover{
-  background:var(--gold);
-  color:black;
-}
-
-/* STORY VIEW */
-.story-view{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:black;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:999;
-}
-
-.story-view img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
-
-.close{
-  position:absolute;
-  top:20px;
-  right:20px;
-  font-size:25px;
-  cursor:pointer;
-}
-.spinner{
-  width:50px;
-  height:50px;
-  border:3px solid rgba(255,255,255,0.1);
-  border-top:3px solid var(--gold);
-  border-radius:50%;
-  animation:spin 1s linear infinite;
-}
-
-@keyframes spin{
-  0%{ transform:rotate(0deg);}
-  100%{ transform:rotate(360deg);}
-}
+  margin:20px 0;
+}  
 </style>
+
 </head>
 
 <body>
-<div id="loaderUpload" style="
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,0.9);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  z-index:1000;
-">
 
-  <div class="spinner"></div>
-  <p style="margin-top:15px; opacity:.7;">Subiendo imagen...</p>
-
-</div>
-<!-- PROFILE -->
 <section class="profile">
-  <img src="https://picsum.photos/200" alt="">
-  <h1>Valeria XV</h1>
+  <img src="https://picsum.photos/200">
+  <h1>Sofia XV</h1>
   <p>15 · Agosto · 2026</p>
 </section>
 
-<!-- STORIES -->
-<section class="stories">
-  <div class="story" onclick="openStory(0)">
-    <img src="https://picsum.photos/100?1">
-    <span>Infancia</span>
-  </div>
-
-  <div class="story" onclick="openStory(1)">
-    <img src="https://picsum.photos/100?2">
-    <span>Creciendo</span>
-  </div>
-
-  <div class="story" onclick="openStory(2)">
-    <img src="https://picsum.photos/100?3">
-    <span>Sesión</span>
-  </div>
-
-  <div class="story" onclick="openStory(3)">
-    <img src="https://picsum.photos/100?4">
-    <span>Mensaje</span>
-  </div>
-</section>
-<div style="text-align:center; padding:20px;">
+<div class="upload-box">
   <label class="btn">
     Subir foto 📸
     <input type="file" accept="image/*" capture="environment" id="upload" hidden>
   </label>
 </div>
-  <div id="previewContainer" style="text-align:center; display:none;">
-  <p style="margin-bottom:10px;">Vista previa</p>
-  <img id="preview" style="width:150px; border-radius:10px;">
-</div>
-<!-- FEED -->
+  
 <section class="feed">
   <img src="https://picsum.photos/300?1">
   <img src="https://picsum.photos/300?2">
@@ -246,45 +102,39 @@ body{
   <img src="https://picsum.photos/300?5">
   <img src="https://picsum.photos/300?6">
 </section>
+<script>
+const uploadInput = document.getElementById("upload");
+const feed = document.querySelector(".feed");
 
-<!-- HIGHLIGHT -->
-<section class="highlight">
-  <img src="https://picsum.photos/800/500">
-</section>
+uploadInput.addEventListener("change", function(event){
+  const file = event.target.files[0];
 
-<!-- CTA -->
-<section class="cta">
-  <h2>Gracias por ser parte de este momento</h2>
-  <a href="#" class="btn">Confirmar asistencia</a>
-  <a href="#" class="btn">Ver ubicación</a>
-</section>
+  if(file){
+    const reader = new FileReader();
 
-<!-- STORY VIEW -->
-<div class="story-view" id="storyView">
-  <span class="close" onclick="closeStory()">✕</span>
-  <img id="storyImg">
-</div>
+    reader.onload = function(e){
 
+      const newImg = document.createElement("img");
+      newImg.src = e.target.result;
 
-const stories = [
-  "https://picsum.photos/800/1400?1",
-  "https://picsum.photos/800/1400?2",
-  "https://picsum.photos/800/1400?3",
-  "https://picsum.photos/800/1400?4"
-];
+      // animación entrada
+      newImg.style.opacity = "0";
+      newImg.style.transform = "scale(0.95)";
 
-function openStory(index){
-  document.getElementById("storyView").style.display="flex";
-  document.getElementById("storyImg").src=stories[index];
-}
+      // se agrega arriba
+      feed.prepend(newImg);
 
-function closeStory(){
-  document.getElementById("storyView").style.display="none";
-}
+      setTimeout(()=>{
+        newImg.style.transition = ".4s ease";
+        newImg.style.opacity = "1";
+        newImg.style.transform = "scale(1)";
+      },100);
+    };
 
-
-background: rgba(0,0,0,0.6);
-backdrop-filter: blur(8px);
-
+    reader.readAsDataURL(file);
+  }
+});
+</script>
+  
 </body>
 </html>
