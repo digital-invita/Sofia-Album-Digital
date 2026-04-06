@@ -176,7 +176,21 @@ body{
   letter-spacing: 0.5px;
   opacity: 0.6;
 }  
-  
+.anon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #555;
+  margin-top: 8px;
+  justify-content: center;
+}
+
+.anon input {
+  width: 16px;
+  height: 16px;
+  accent-color: #111;
+}  
 /* BOTONES */
 .btn{
   display:inline-block;
@@ -290,6 +304,19 @@ const db = firebase.firestore();
 // ELEMENTOS
 const uploadInput = document.getElementById("upload");
 const feed = document.querySelector(".feed");
+  const anonCheckbox = document.getElementById("modalAnon");
+const nameInput = document.getElementById("modalName");
+
+anonCheckbox.addEventListener("change", () => {
+  if(anonCheckbox.checked){
+    nameInput.value = "";
+    nameInput.disabled = true;
+    nameInput.placeholder = "Anónimo";
+  } else {
+    nameInput.disabled = false;
+    nameInput.placeholder = "Tu nombre";
+  }
+});
 
 // 🔍 VISOR
 function openViewer(src){
@@ -314,11 +341,16 @@ uploadInput.addEventListener("change", function(event){
     document.getElementById("modal").style.display = "flex";
   }
 });
-document.getElementById("confirmUpload").addEventListener("click", async () => {
+const confirmBtn = document.getElementById("confirmUpload");
 
-  if(!tempFile) return;
+confirmBtn.addEventListener("click", async () => {
 
-  const guestName = document.getElementById("modalName").value;
+  if(!tempFile || confirmBtn.disabled) return;
+
+  confirmBtn.disabled = true;
+  confirmBtn.innerText = "Subiendo...";
+
+  const nameInput = document.getElementById("modalName");
   const anonimo = document.getElementById("modalAnon").checked;
 
   try {
@@ -334,7 +366,7 @@ document.getElementById("confirmUpload").addEventListener("click", async () => {
       .collection("fotos")
       .add({
         image: url,
-        name: anonimo ? "Anónimo" : (guestName || "Invitado"),
+        name: anonimo ? "Anónimo" : (nameInput.value || "Invitado"),
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
 
@@ -342,15 +374,20 @@ document.getElementById("confirmUpload").addEventListener("click", async () => {
     document.getElementById("modal").style.display = "none";
 
     // limpiar
-    document.getElementById("modalName").value = "";
+    nameInput.value = "";
     document.getElementById("modalAnon").checked = false;
+    confirmBtn.disabled = false;
+    confirmBtn.innerText = "Subir foto";
     tempFile = null;
 
   } catch (error) {
     console.error(error);
+    confirmBtn.disabled = false;
+    confirmBtn.innerText = "Subir foto";
   }
 
 });
+
 
 
 
@@ -393,6 +430,10 @@ card.appendChild(name);
 card.onclick = () => openViewer(data.image);
 
 feed.appendChild(card);
+
+
+
+        
         
       });
 
