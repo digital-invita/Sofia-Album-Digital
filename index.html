@@ -189,18 +189,26 @@ uploadInput.addEventListener("change", async function(event){
   const file = event.target.files[0];
 
   if(file){
+    try {
 
-    const fileName = Date.now() + "_" + file.name;
-    const storageRef = storage.ref("galeria/" + fileName);
+      const fileName = Date.now() + "_" + file.name;
+      const storageRef = storage.ref("galeria/" + fileName);
 
-    await storageRef.put(file);
-    const url = await storageRef.getDownloadURL();
+      await storageRef.put(file);
+      const url = await storageRef.getDownloadURL();
 
-    await db.collection("galeria").add({
-      image: url,
-      createdAt: new Date()
-    });
+      console.log("URL:", url);
 
+      await db.collection("galeria").add({
+        image: url,
+        createdAt: new Date()
+      });
+
+      console.log("Guardado en Firestore");
+
+    } catch (error) {
+      console.error("ERROR:", error);
+    }
   }
 });
 
