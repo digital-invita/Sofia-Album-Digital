@@ -144,14 +144,7 @@ body{
   </label>
 </div>
   
-<section class="feed">
-  <img src="https://picsum.photos/300?1">
-  <img src="https://picsum.photos/300?2">
-  <img src="https://picsum.photos/300?3">
-  <img src="https://picsum.photos/300?4">
-  <img src="https://picsum.photos/300?5">
-  <img src="https://picsum.photos/300?6">
-</section>
+<section class="feed"></section>
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -214,11 +207,18 @@ uploadInput.addEventListener("change", async function(event){
 // 📥 CARGAR EN TIEMPO REAL
 window.addEventListener("DOMContentLoaded", () => {
 
+  feed.innerHTML = "<p style='text-align:center'>Cargando fotos...</p>";
+
   db.collection("galeria")
   .orderBy("createdAt","desc")
   .onSnapshot(snapshot => {
 
     feed.innerHTML = "";
+
+    if(snapshot.empty){
+      feed.innerHTML = "<p style='text-align:center'>No hay fotos aún</p>";
+      return;
+    }
 
     snapshot.forEach(doc => {
       const data = doc.data();
@@ -226,7 +226,6 @@ window.addEventListener("DOMContentLoaded", () => {
       const img = document.createElement("img");
       img.src = data.image;
 
-      // animación
       img.style.opacity = "0";
       img.style.transform = "scale(0.95)";
 
@@ -239,7 +238,6 @@ window.addEventListener("DOMContentLoaded", () => {
         img.style.opacity = "1";
         img.style.transform = "scale(1)";
       },100);
-
     });
 
   });
