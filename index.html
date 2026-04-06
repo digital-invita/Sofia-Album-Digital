@@ -207,7 +207,24 @@ body{
   background:#111;
   color:#fff;
 }
-  
+
+ .nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 40px;
+  color: white;
+  padding: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.nav.left { left: 20px; }
+.nav.right { right: 20px; }
+
+.nav:hover {
+  opacity: 0.7;
+} 
 </style>
 
 </head>
@@ -253,6 +270,10 @@ body{
     cursor:pointer;
   ">✕</span>
 
+  <!-- BOTONES -->
+  <div class="nav left" onclick="prevImage()">‹</div>
+  <div class="nav right" onclick="nextImage()">›</div>
+
   <img id="viewerImg" style="
     max-width:90%;
     max-height:90%;
@@ -283,7 +304,8 @@ body{
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
-
+let galleryImages = [];
+let currentIndex = 0;
 let tempFile = null;
   
 // 🔥 CONFIG FIREBASE
@@ -317,7 +339,19 @@ anonCheckbox.addEventListener("change", () => {
     nameInput.placeholder = "Tu nombre";
   }
 });
+function nextImage(){
+  if(currentIndex < galleryImages.length - 1){
+    currentIndex++;
+    document.getElementById("viewerImg").src = galleryImages[currentIndex];
+  }
+}
 
+function prevImage(){
+  if(currentIndex > 0){
+    currentIndex--;
+    document.getElementById("viewerImg").src = galleryImages[currentIndex];
+  }
+}
 // 🔍 VISOR
 function openViewer(src){
   const viewer = document.getElementById("viewer");
@@ -409,9 +443,12 @@ window.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      snapshot.forEach(doc => {
-        const data = doc.data();
+      galleryImages = [];
 
+snapshot.forEach((doc, index) => {
+  const data = doc.data();
+
+  galleryImages.push(data.image);
         const card = document.createElement("div");
 card.className = "polaroid";
 
@@ -427,7 +464,10 @@ name.textContent = data.name || "Invitado";
 card.appendChild(img);
 card.appendChild(name);
 
-card.onclick = () => openViewer(data.image);
+card.onclick = () => {
+  currentIndex = index;
+  openViewer(data.image);
+};
 
 feed.appendChild(card);
 
