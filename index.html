@@ -300,20 +300,7 @@ card.appendChild(name);
 card.onclick = () => openViewer(data.image);
 
 feed.appendChild(card);
-        img.src = data.image;
-
-        img.style.opacity = "0";
-        img.style.transform = "scale(0.95)";
-
-        img.onclick = () => openViewer(data.image);
-
-        feed.appendChild(img);
-
-        setTimeout(()=>{
-          img.style.transition = ".3s ease";
-          img.style.opacity = "1";
-          img.style.transform = "scale(1)";
-        },100);
+        
       });
 
     });
