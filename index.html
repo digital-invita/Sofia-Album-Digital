@@ -153,9 +153,32 @@ body{
   <img src="https://picsum.photos/300?6">
 </section>
 
-  
-<script>
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
+<script>
+// 🔥 CONFIG FIREBASE
+const firebaseConfig = {
+  apiKey: "AIzaSyBQTeEhNmzK-zls5oe6sRAEyC05WBIYX40",
+  authDomain: "album-digital-invita.firebaseapp.com",
+  projectId: "album-digital-invita",
+  storageBucket: "album-digital-invita.firebasestorage.app",
+  messagingSenderId: "238056287053",
+  appId: "1:238056287053:web:5ac86d483d4ede1016a504"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const storage = firebase.storage();
+const db = firebase.firestore();
+
+// ELEMENTOS
+const uploadInput = document.getElementById("upload");
+const feed = document.querySelector(".feed");
+
+// 🔍 VISOR
 function openViewer(src){
   const viewer = document.getElementById("viewer");
   const viewerImg = document.getElementById("viewerImg");
@@ -166,88 +189,56 @@ function openViewer(src){
 
 document.getElementById("closeViewer").onclick = function(){
   document.getElementById("viewer").style.display = "none";
-};  
+};
 
-const uploadInput = document.getElementById("upload");
-const feed = document.querySelector(".feed");
-
- // CARGAR IMÁGENES GUARDADAS
-window.addEventListener("DOMContentLoaded", ()=>{
-  const savedImages = JSON.parse(localStorage.getItem("gallery")) || [];
-
-  savedImages.forEach(src => {
-    const img = document.createElement("img");
-    img.src = src;
-    feed.appendChild(img);
-  });
-}); 
-
-function compressImage(file, callback){
-  const reader = new FileReader();
-
-  reader.onload = function(e){
-    const img = new Image();
-    img.src = e.target.result;
-
-    img.onload = function(){
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-
-      // 🔽 REDUCIR TAMAÑO
-      const maxWidth = 800;
-      const scale = maxWidth / img.width;
-
-      canvas.width = maxWidth;
-      canvas.height = img.height * scale;
-
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-      // 🔽 CALIDAD (0.7 = muy buen balance)
-      const compressedData = canvas.toDataURL("image/jpeg", 0.7);
-
-      callback(compressedData);
-    };
-  };
-
-  reader.readAsDataURL(file);
-}
-
-
-// USO EN TU UPLOAD
-
-  
-uploadInput.addEventListener("change", function(event){
+// 📤 SUBIR IMAGEN
+uploadInput.addEventListener("change", async function(event){
   const file = event.target.files[0];
 
   if(file){
 
-    compressImage(file, function(imgSrc){
+    const fileName = Date.now() + "_" + file.name;
+    const storageRef = storage.ref("galeria/" + fileName);
 
-      // CREAR IMAGEN
-const newImg = document.createElement("img");
-newImg.src = imgSrc;
-newImg.onclick = () => openViewer(imgSrc);
-// animación
-newImg.style.opacity = "0";
-newImg.style.transform = "scale(0.95)";
+    await storageRef.put(file);
+    const url = await storageRef.getDownloadURL();
 
-feed.prepend(newImg);
-
-setTimeout(()=>{
-  newImg.style.transition = ".3s ease";
-  newImg.style.opacity = "1";
-  newImg.style.transform = "scale(1)";
-},100);
-
-      // GUARDAR
-      let gallery = JSON.parse(localStorage.getItem("gallery")) || [];
-      gallery.unshift(imgSrc);
-      localStorage.setItem("gallery", JSON.stringify(gallery));
-      img.onclick = () => openViewer(src);
-
+    await db.collection("galeria").add({
+      image: url,
+      createdAt: new Date()
     });
 
   }
+});
+
+// 📥 CARGAR EN TIEMPO REAL
+db.collection("galeria")
+.orderBy("createdAt","desc")
+.onSnapshot(snapshot => {
+
+  feed.innerHTML = "";
+
+  snapshot.forEach(doc => {
+    const data = doc.data();
+
+    const img = document.createElement("img");
+    img.src = data.image;
+
+    // animación
+    img.style.opacity = "0";
+    img.style.transform = "scale(0.95)";
+
+    img.onclick = () => openViewer(data.image);
+
+    feed.appendChild(img);
+
+    setTimeout(()=>{
+      img.style.transition = ".3s ease";
+      img.style.opacity = "1";
+      img.style.transform = "scale(1)";
+    },100);
+  });
+
 });
 </script>
   
