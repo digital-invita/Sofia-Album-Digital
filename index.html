@@ -30,6 +30,7 @@ body{
 #viewerImg {
   transition: transform 0.2s ease, opacity 0.2s ease;
    will-change: transform, opacity;
+  touch-action: none;
 }
   #counter {
   position: absolute;
@@ -318,6 +319,11 @@ body{
 
 <script>
   const viewer = document.getElementById("viewer");
+let isDragging = false;
+let startXPan = 0;
+let startYPan = 0;
+let currentX = 0;
+let currentY = 0;
 let lastTap = 0;
 let zoomed = false;
 let startX = 0;
@@ -362,7 +368,19 @@ function updateCounter(){
   const counter = document.getElementById("counter");
   counter.innerText = `${currentIndex + 1} / ${galleryImages.length}`;
 }  
+
+  function resetZoom(){
+  const img = document.getElementById("viewerImg");
+
+  zoomed = false;
+  isDragging = false;
+  currentX = 0;
+  currentY = 0;
+
+  img.style.transform = "scale(1)";
+}
 function nextImage(){
+  resetZoom();
 
   if(currentIndex < galleryImages.length - 1){
 
@@ -386,7 +404,7 @@ updateCounter();
   }
 }
 function prevImage(){
- 
+ resetZoom();
   if(currentIndex > 0){
 
     const img = document.getElementById("viewerImg");
@@ -408,57 +426,89 @@ function prevImage(){
     },150);
   }
 }
-let isSwiping = false;
 
-viewer.addEventListener("touchstart", (e) => {
+  viewer.addEventListener("touchstart", (e) => {
+
+  if(zoomed){
+    isDragging = true;
+
+    startXPan = e.touches[0].clientX - currentX;
+    startYPan = e.touches[0].clientY - currentY;
+
+    return;
+  }
+
   startX = e.touches[0].clientX;
   isSwiping = true;
 });
+  viewer.addEventListener("touchmove", (e) => {
 
-viewer.addEventListener("touchmove", (e) => {
+  const img = document.getElementById("viewerImg");
+
+  // 🔥 ZOOM (drag)
+  if(zoomed && isDragging){
+    e.preventDefault();
+
+    currentX = e.touches[0].clientX - startXPan;
+    currentY = e.touches[0].clientY - startYPan;
+
+    img.style.transform = `scale(2) translate(${currentX}px, ${currentY}px)`;
+    return;
+  }
+
+  // 🔥 SWIPE
   if(!isSwiping) return;
 
-  e.preventDefault(); // 🔥 bloquea scroll
+  e.preventDefault();
 
-  const currentX = e.touches[0].clientX;
-  const diff = currentX - startX;
+  const currentTouchX = e.touches[0].clientX;
+  const diff = currentTouchX - startX;
 
-  const img = document.getElementById("viewerImg");
-
-  // movimiento
   img.style.transform = `translateX(${diff}px)`;
+  img.style.opacity = Math.max(0.3, 1 - Math.abs(diff) / 300);
 
-  // 🔥 efecto pro (se desvanece)
-  img.style.opacity = 1 - Math.abs(diff) / 300;
 }, { passive: false });
+let isSwiping = false;
 
 viewer.addEventListener("touchend", (e) => {
-  isSwiping = false;
+
+
 
   const img = document.getElementById("viewerImg");
 
-  // 🔥 DETECTAR DOBLE TAP
+  // 🔥 SI ESTÁ EN ZOOM → detener drag
+  if(zoomed){
+    isDragging = false;
+    return;
+  }
+
+  isSwiping = false;
+
   const currentTime = new Date().getTime();
   const tapLength = currentTime - lastTap;
 
+  // 🔥 DOBLE TAP
   if(tapLength < 300 && tapLength > 0){
-    // 👉 doble tap detectado
+
     if(!zoomed){
       img.style.transform = "scale(2)";
-      img.style.transition = "transform 0.3s ease";
       zoomed = true;
     } else {
       img.style.transform = "scale(1)";
       zoomed = false;
+
+      // reset posición
+      currentX = 0;
+      currentY = 0;
     }
 
     lastTap = 0;
-    return; // 🚨 evita que haga swipe
+    return;
   }
 
   lastTap = currentTime;
 
-  // 👉 swipe normal
+  // 🔥 SWIPE
   img.style.opacity = "1";
 
   const diff = startX - e.changedTouches[0].clientX;
@@ -471,7 +521,6 @@ viewer.addEventListener("touchend", (e) => {
     }
   }
 
-  // reset suave
   img.style.transition = "transform 0.25s ease";
   img.style.transform = "translateX(0)";
 
@@ -484,8 +533,10 @@ viewer.addEventListener("touchend", (e) => {
 
 // 🔍 VISOR
 function openViewer(src){
- 
+
   const viewerImg = document.getElementById("viewerImg");
+
+  resetZoom(); 
 
   viewer.style.display = "flex";
   viewerImg.src = src;
