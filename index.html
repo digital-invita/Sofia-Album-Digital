@@ -1,1 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valeria XV</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --black:#000;
+  --blue:#0a2540;
+  --gold:#c9a45c;
+  --gray:#1a1a1a;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins', sans-serif;
+}
+
+body{
+  background:linear-gradient(135deg,var(--black),var(--gray),var(--blue));
+  color:white;
+}
+
+/* PROFILE */
+.profile{
+  text-align:center;
+  padding:40px 20px;
+}
+
+.profile img{
+  width:110px;
+  height:110px;
+  border-radius:50%;
+  border:2px solid var(--gold);
+  object-fit:cover;
+}
+
+.profile h1{
+  font-family:'Playfair Display';
+  margin-top:15px;
+  font-size:28px;
+}
+
+.profile p{
+  opacity:.7;
+  margin-top:5px;
+}
+
+/* STORIES */
+.stories{
+  display:flex;
+  gap:15px;
+  overflow-x:auto;
+  padding:20px;
+}
+
+.story{
+  min-width:75px;
+  text-align:center;
+  cursor:pointer;
+}
+
+.story img{
+  width:70px;
+  height:70px;
+  border-radius:50%;
+  border:2px solid var(--gold);
+}
+
+.story span{
+  font-size:12px;
+  margin-top:5px;
+  display:block;
+}
+
+/* FEED */
+.feed{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:5px;
+  padding:5px;
+}
+
+.feed img{
+  width:100%;
+  height:120px;
+  object-fit:cover;
+  transition:.3s;
+}
+
+.feed img:hover{
+  transform:scale(1.05);
+  opacity:.8;
+}
+
+/* HIGHLIGHT */
+.highlight{
+  padding:30px 20px;
+}
+
+.highlight img{
+  width:100%;
+  border-radius:15px;
+}
+
+/* CTA */
+.cta{
+  text-align:center;
+  padding:40px 20px;
+}
+
+.cta h2{
+  font-family:'Playfair Display';
+  margin-bottom:15px;
+}
+
+.btn{
+  display:inline-block;
+  margin:10px;
+  padding:12px 25px;
+  border-radius:30px;
+  border:1px solid var(--gold);
+  color:white;
+  text-decoration:none;
+  transition:.3s;
+}
+
+.btn:hover{
+  background:var(--gold);
+  color:black;
+}
+
+/* STORY VIEW */
+.story-view{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:black;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+
+.story-view img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.close{
+  position:absolute;
+  top:20px;
+  right:20px;
+  font-size:25px;
+  cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- PROFILE -->
+<section class="profile">
+  <img src="https://picsum.photos/200" alt="">
+  <h1>Valeria XV</h1>
+  <p>15 · Agosto · 2026</p>
+</section>
+
+<!-- STORIES -->
+<section class="stories">
+  <div class="story" onclick="openStory(0)">
+    <img src="https://picsum.photos/100?1">
+    <span>Infancia</span>
+  </div>
+
+  <div class="story" onclick="openStory(1)">
+    <img src="https://picsum.photos/100?2">
+    <span>Creciendo</span>
+  </div>
+
+  <div class="story" onclick="openStory(2)">
+    <img src="https://picsum.photos/100?3">
+    <span>Sesión</span>
+  </div>
+
+  <div class="story" onclick="openStory(3)">
+    <img src="https://picsum.photos/100?4">
+    <span>Mensaje</span>
+  </div>
+</section>
+
+<!-- FEED -->
+<section class="feed">
+  <img src="https://picsum.photos/300?1">
+  <img src="https://picsum.photos/300?2">
+  <img src="https://picsum.photos/300?3">
+  <img src="https://picsum.photos/300?4">
+  <img src="https://picsum.photos/300?5">
+  <img src="https://picsum.photos/300?6">
+</section>
+
+<!-- HIGHLIGHT -->
+<section class="highlight">
+  <img src="https://picsum.photos/800/500">
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <h2>Gracias por ser parte de este momento</h2>
+  <a href="#" class="btn">Confirmar asistencia</a>
+  <a href="#" class="btn">Ver ubicación</a>
+</section>
+
+<!-- STORY VIEW -->
+<div class="story-view" id="storyView">
+  <span class="close" onclick="closeStory()">✕</span>
+  <img id="storyImg">
+</div>
+
+<script>
+const stories = [
+  "https://picsum.photos/800/1400?1",
+  "https://picsum.photos/800/1400?2",
+  "https://picsum.photos/800/1400?3",
+  "https://picsum.photos/800/1400?4"
+];
+
+function openStory(index){
+  document.getElementById("storyView").style.display="flex";
+  document.getElementById("storyImg").src=stories[index];
+}
+
+function closeStory(){
+  document.getElementById("storyView").style.display="none";
+}
+</script>
+
+</body>
+</html>
