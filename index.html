@@ -28,6 +28,71 @@ body{
   color:#111;
 }
 
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(10px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  padding: 26px 22px;
+  border-radius: 22px;
+  width: 90%;
+  max-width: 320px;
+  text-align: center;
+  
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.25),
+    inset 0 1px 0 rgba(255,255,255,0.6);
+
+  animation: modalIn 0.35s cubic-bezier(.22,.61,.36,1);
+}
+
+  @keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-content h3 {
+  font-family: 'Playfair Display';
+  margin-bottom: 15px;
+}
+
+.modal-content input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+}
+
+.modal-content button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  background: #111;
+  color: #fff;
+  margin-top: 10px;
+}
+  
 /* PERFIL */
 .profile{
   text-align:center;
@@ -94,8 +159,9 @@ body{
 }
 
 .polaroid img {
+  object-position: center;
   width: 100%;
-  height: 120px;
+  aspect-ratio: 4 / 5;
   object-fit: cover;
   border-radius: 6px;
 }
@@ -133,6 +199,24 @@ body{
 </head>
 
 <body>
+<div id="modal" class="modal">
+  <div class="modal-content">
+
+    <h3>Compartir recuerdo</h3>
+
+    <input type="text" id="modalName" placeholder="Tu nombre">
+
+    <label class="anon">
+      <input type="checkbox" id="modalAnon">
+      Subir como anónimo
+    </label>
+
+    <button id="confirmUpload">Subir foto</button>
+
+  </div>
+</div>
+
+  
 <div id="viewer" style="
   position:fixed;
   top:0;
@@ -167,14 +251,9 @@ body{
   <h1>Sofia XV</h1>
   <p>15 · Agosto · 2026</p>
 </section>
-<div class="guest-input">
-  <input type="text" id="guestName" placeholder="Tu nombre">
   
-  <label class="anon">
-    <input type="checkbox" id="anonimo">
-    Subir como anónimo
-  </label>
-</div>
+
+  
 <div class="upload-box">
   <label class="btn">
     Subir foto 📸
@@ -191,7 +270,7 @@ body{
 
 <script>
 
-
+let tempFile = null;
   
 // 🔥 CONFIG FIREBASE
 const firebaseConfig = {
@@ -228,42 +307,52 @@ document.getElementById("closeViewer").onclick = function(){
 const eventoID = "sofia-xv";
 
 // 📤 SUBIR IMAGEN
-uploadInput.addEventListener("change", async function(event){
-  const file = event.target.files[0];
+uploadInput.addEventListener("change", function(event){
+  tempFile = event.target.files[0];
 
-  if(file){
-    try {
-
-      const fileName = Date.now() + "_" + file.name;
-      const storageRef = storage.ref("galeria/" + fileName);
-
-      await storageRef.put(file);
-      const url = await storageRef.getDownloadURL();
-
-      // 👇 primero obtenemos datos
-      const guestName = document.getElementById("guestName").value;
-      const anonimo = document.getElementById("anonimo").checked;
-
-      // 👇 luego guardamos
-      await db.collection("galeria")
-        .doc(eventoID)
-        .collection("fotos")
-        .add({
-          image: url,
-          name: anonimo ? "Anónimo" : (guestName || "Invitado"),
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-      console.log("Guardado en evento:", eventoID);
-
-      // limpiar campos (opcional pero pro)
-      document.getElementById("guestName").value = "";
-      document.getElementById("anonimo").checked = false;
-
-    } catch (error) {
-      console.error("ERROR:", error);
-    }
+  if(tempFile){
+    document.getElementById("modal").style.display = "flex";
   }
+});
+document.getElementById("confirmUpload").addEventListener("click", async () => {
+
+  if(!tempFile) return;
+
+  const guestName = document.getElementById("modalName").value;
+  const anonimo = document.getElementById("modalAnon").checked;
+
+  try {
+
+    const fileName = Date.now() + "_" + tempFile.name;
+    const storageRef = storage.ref("galeria/" + fileName);
+
+    await storageRef.put(tempFile);
+    const url = await storageRef.getDownloadURL();
+
+    await db.collection("galeria")
+      .doc(eventoID)
+      .collection("fotos")
+      .add({
+        image: url,
+        name: anonimo ? "Anónimo" : (guestName || "Invitado"),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+    // cerrar modal
+    document.getElementById("modal").style.display = "none";
+
+    // limpiar
+    document.getElementById("modalName").value = "";
+    document.getElementById("modalAnon").checked = false;
+    tempFile = null;
+
+  } catch (error) {
+    console.error(error);
+  }
+
+});
+  
+
 });
 
 
@@ -309,7 +398,7 @@ feed.appendChild(card);
         
       });
 
-    });
+
 
 });
 </script>  
