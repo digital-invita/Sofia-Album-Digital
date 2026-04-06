@@ -318,6 +318,8 @@ body{
 
 <script>
   const viewer = document.getElementById("viewer");
+let lastTap = 0;
+let zoomed = false;
 let startX = 0;
 let endX = 0;
 let galleryImages = [];
@@ -433,9 +435,31 @@ viewer.addEventListener("touchmove", (e) => {
 viewer.addEventListener("touchend", (e) => {
   isSwiping = false;
 
-  const img = document.getElementById("viewerImg"); // 👈 primero
+  const img = document.getElementById("viewerImg");
 
-  img.style.opacity = "1"; // 👈 ahora sí
+  // 🔥 DETECTAR DOBLE TAP
+  const currentTime = new Date().getTime();
+  const tapLength = currentTime - lastTap;
+
+  if(tapLength < 300 && tapLength > 0){
+    // 👉 doble tap detectado
+    if(!zoomed){
+      img.style.transform = "scale(2)";
+      img.style.transition = "transform 0.3s ease";
+      zoomed = true;
+    } else {
+      img.style.transform = "scale(1)";
+      zoomed = false;
+    }
+
+    lastTap = 0;
+    return; // 🚨 evita que haga swipe
+  }
+
+  lastTap = currentTime;
+
+  // 👉 swipe normal
+  img.style.opacity = "1";
 
   const diff = startX - e.changedTouches[0].clientX;
 
