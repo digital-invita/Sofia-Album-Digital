@@ -125,35 +125,58 @@ body{
   <img src="https://picsum.photos/300?6">
 </section>
 <script>
-const uploadInput = document.getElementById("upload");
-const feed = document.querySelector(".feed");
+function compressImage(file, callback){
+  const reader = new FileReader();
 
+  reader.onload = function(e){
+    const img = new Image();
+    img.src = e.target.result;
+
+    img.onload = function(){
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      // 🔽 REDUCIR TAMAÑO
+      const maxWidth = 800;
+      const scale = maxWidth / img.width;
+
+      canvas.width = maxWidth;
+      canvas.height = img.height * scale;
+
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      // 🔽 CALIDAD (0.7 = muy buen balance)
+      const compressedData = canvas.toDataURL("image/jpeg", 0.7);
+
+      callback(compressedData);
+    };
+  };
+
+  reader.readAsDataURL(file);
+}
+
+
+// USO EN TU UPLOAD
 uploadInput.addEventListener("change", function(event){
   const file = event.target.files[0];
 
   if(file){
-    const reader = new FileReader();
 
-    reader.onload = function(e){
+    compressImage(file, function(imgSrc){
 
+      // CREAR IMAGEN
       const newImg = document.createElement("img");
-      newImg.src = e.target.result;
+      newImg.src = imgSrc;
 
-      // animación entrada
-      newImg.style.opacity = "0";
-      newImg.style.transform = "scale(0.95)";
-
-      // se agrega arriba
       feed.prepend(newImg);
 
-      setTimeout(()=>{
-        newImg.style.transition = ".4s ease";
-        newImg.style.opacity = "1";
-        newImg.style.transform = "scale(1)";
-      },100);
-    };
+      // GUARDAR
+      let gallery = JSON.parse(localStorage.getItem("gallery")) || [];
+      gallery.unshift(imgSrc);
+      localStorage.setItem("gallery", JSON.stringify(gallery));
 
-    reader.readAsDataURL(file);
+    });
+
   }
 });
 </script>
