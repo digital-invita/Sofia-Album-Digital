@@ -23,8 +23,9 @@
 }
 
 body{
-  background:linear-gradient(135deg,var(--black),var(--gray),var(--blue));
-  color:white;
+  background:#ffffff;
+  background-image:linear-gradient(to bottom,#ffffff,#f7f7f7);
+  color:#111;
 }
 
 /* PERFIL */
@@ -47,7 +48,7 @@ body{
 }
 
 .profile p{
-  opacity:.7;
+  color:#555;
 }
 /* FEED */
 .feed{
@@ -74,7 +75,28 @@ body{
 .upload-box{
   text-align:center;
   margin:20px 0;
+}
+
+.feed img{
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
 }  
+/* BOTONES */
+.btn{
+  display:inline-block;
+  margin:10px;
+  padding:12px 25px;
+  border-radius:30px;
+  border:1px solid #111;
+  color:#111;
+  text-decoration:none;
+  transition:.3s;
+}
+
+.btn:hover{
+  background:#111;
+  color:#fff;
+}
+  
 </style>
 
 </head>
