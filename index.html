@@ -51,11 +51,11 @@ body{
   color:#555;
 }
 /* FEED */
-.feed{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:6px;
-  padding:10px;
+.feed {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  padding: 14px;
 }
 
 .feed img{
@@ -83,11 +83,14 @@ body{
 
 .polaroid {
   background: #fff;
-  padding: 10px 10px 30px;
-  border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-  transform: rotate(calc(-2deg + 4deg * var(--random)));
+  padding: 10px 10px 45px;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
   transition: .3s ease;
+}
+
+.polaroid:hover {
+  transform: scale(1.03) rotate(0deg);
 }
 
 .polaroid img {
@@ -99,10 +102,13 @@ body{
 
 .polaroid p {
   text-align: center;
-  margin-top: 8px;
-  font-size: 13px;
-  color: #333;
-  font-family: 'Playfair Display';
+  margin-top: 10px;
+  font-size: 11px;
+  color: #444;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  letter-spacing: 0.5px;
+  opacity: 0.6;
 }  
   
 /* BOTONES */
