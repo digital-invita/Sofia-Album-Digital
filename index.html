@@ -211,32 +211,38 @@ uploadInput.addEventListener("change", async function(event){
   }
 });
 
+<script>
 // 📥 CARGAR EN TIEMPO REAL
-db.collection("galeria")
-.orderBy("createdAt","desc")
-.onSnapshot(snapshot => {
+window.addEventListener("DOMContentLoaded", () => {
 
-  feed.innerHTML = "";
+  db.collection("galeria")
+  .orderBy("createdAt","desc")
+  .onSnapshot(snapshot => {
 
-  snapshot.forEach(doc => {
-    const data = doc.data();
+    feed.innerHTML = "";
 
-    const img = document.createElement("img");
-    img.src = data.image;
+    snapshot.forEach(doc => {
+      const data = doc.data();
 
-    // animación
-    img.style.opacity = "0";
-    img.style.transform = "scale(0.95)";
+      const img = document.createElement("img");
+      img.src = data.image;
 
-    img.onclick = () => openViewer(data.image);
+      // animación
+      img.style.opacity = "0";
+      img.style.transform = "scale(0.95)";
 
-    feed.appendChild(img);
+      img.onclick = () => openViewer(data.image);
 
-    setTimeout(()=>{
-      img.style.transition = ".3s ease";
-      img.style.opacity = "1";
-      img.style.transform = "scale(1)";
-    },100);
+      feed.appendChild(img);
+
+      setTimeout(()=>{
+        img.style.transition = ".3s ease";
+        img.style.opacity = "1";
+        img.style.transform = "scale(1)";
+      },100);
+
+    });
+
   });
 
 });
