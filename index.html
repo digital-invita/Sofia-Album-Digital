@@ -44,6 +44,10 @@
       overflow-x: hidden;
     }
 
+    body.overlay-open {
+      overflow: hidden;
+    }
+
     body::before {
       content: "";
       position: fixed;
@@ -1747,15 +1751,18 @@
 
     openWheelBtn.addEventListener("click", () => {
       wheelPopup.classList.add("open");
+      document.body.classList.add("overlay-open");
     });
 
     closeWheelBtn.addEventListener("click", () => {
       wheelPopup.classList.remove("open");
+      document.body.classList.remove("overlay-open");
     });
 
     wheelPopup.addEventListener("click", (event) => {
       if (event.target === wheelPopup) {
         wheelPopup.classList.remove("open");
+        document.body.classList.remove("overlay-open");
       }
     });
 
