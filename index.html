@@ -377,7 +377,7 @@ function updateCounter(){
   currentX = 0;
   currentY = 0;
 
-  img.style.transform = "scale(1)";
+  img.style.transform = "translate(0px, 0px) scale(1)";
 }
 function nextImage(){
   resetZoom();
@@ -446,16 +446,17 @@ function prevImage(){
   const img = document.getElementById("viewerImg");
 
   // 🔥 ZOOM (drag)
-  if(zoomed && isDragging){
-    e.preventDefault();
+if(zoomed && isDragging){
+  e.preventDefault();
 
-    currentX = e.touches[0].clientX - startXPan;
-    currentY = e.touches[0].clientY - startYPan;
+  isSwiping = false; // 🚨 MUY IMPORTANTE
 
-    img.style.transform = `scale(2) translate(${currentX}px, ${currentY}px)`;
-    return;
-  }
+  currentX = e.touches[0].clientX - startXPan;
+  currentY = e.touches[0].clientY - startYPan;
 
+  img.style.transform = `translate(${currentX}px, ${currentY}px) scale(2)`; // 👈 orden correcto
+  return;
+}
   // 🔥 SWIPE
   if(!isSwiping) return;
 
@@ -472,16 +473,7 @@ let isSwiping = false;
 
 viewer.addEventListener("touchend", (e) => {
 
-
-
   const img = document.getElementById("viewerImg");
-
-  // 🔥 SI ESTÁ EN ZOOM → detener drag
- if(zoomed){
-  isDragging = false;
-}
-
-  isSwiping = false;
 
   const currentTime = new Date().getTime();
   const tapLength = currentTime - lastTap;
@@ -490,15 +482,10 @@ viewer.addEventListener("touchend", (e) => {
   if(tapLength < 300 && tapLength > 0){
 
     if(!zoomed){
-      img.style.transform = "scale(2)";
       zoomed = true;
+      img.style.transform = `translate(${currentX}px, ${currentY}px) scale(2)`;
     } else {
-      img.style.transform = "scale(1)";
-      zoomed = false;
-
-      // reset posición
-      currentX = 0;
-      currentY = 0;
+      resetZoom(); // 👈 usa tu función
     }
 
     lastTap = 0;
@@ -507,7 +494,16 @@ viewer.addEventListener("touchend", (e) => {
 
   lastTap = currentTime;
 
-  // 🔥 SWIPE
+  // 🔥 SI HAY ZOOM → NO HACER SWIPE
+  if(zoomed){
+    isDragging = false;
+      isSwiping = false;
+    return; // 🚨 ESTA LINEA ES LA CLAVE
+  }
+
+  // 🔥 SWIPE NORMAL
+
+
   img.style.opacity = "1";
 
   const diff = startX - e.changedTouches[0].clientX;
