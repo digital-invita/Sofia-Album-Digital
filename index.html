@@ -362,7 +362,7 @@
 
     .wheel-wrap {
       position: relative;
-      width: min(100%, 290px);
+      width: min(100%, 308px);
       aspect-ratio: 1;
       display: grid;
       place-items: center;
@@ -434,22 +434,22 @@
       position: absolute;
       left: 50%;
       top: 50%;
-      width: 74px;
-      min-height: 28px;
+      width: 88px;
+      min-height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
       transform-origin: center center;
-      font-size: 0.63rem;
+      font-size: 0.68rem;
       font-weight: 800;
       color: #243041;
-      line-height: 1.05;
+      line-height: 1.12;
     }
 
     .wheel-label span {
       display: block;
-      max-width: 74px;
+      max-width: 88px;
       text-wrap: balance;
       transform-origin: center center;
       white-space: normal;
@@ -457,9 +457,10 @@
 
     .wheel-controls {
       display: grid;
-      gap: 10px;
+      gap: 12px;
       width: 100%;
       justify-items: center;
+      margin-top: 18px;
     }
 
     .wheel-button {
@@ -675,16 +676,33 @@
       font-size: 15px;
       cursor: pointer;
       z-index: 3;
+      overflow: hidden;
     }
 
     .flip-toggle::before {
       content: "↻";
+      position: relative;
+      z-index: 1;
+    }
+
+    .flip-toggle::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: conic-gradient(rgba(255, 255, 255, 0.45) calc(var(--flip-progress, 0) * 1%), transparent 0);
+      opacity: 0;
+      transition: opacity 0.2s ease;
     }
 
     .polaroid-back .flip-toggle {
       background: rgba(15, 23, 42, 0.08);
       color: var(--accent);
       box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.08);
+    }
+
+    .polaroid.is-counting .flip-toggle::after {
+      opacity: 1;
     }
 
     .polaroid-back-content {
@@ -836,6 +854,34 @@
       cursor: pointer;
     }
 
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 96px);
+      max-width: min(86vw, 360px);
+      padding: 13px 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      background: rgba(15, 23, 42, 0.82);
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-align: center;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 18px 34px rgba(15, 23, 42, 0.24);
+      transform: translate(-50%, 12px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.22s ease, transform 0.22s ease;
+      z-index: 1005;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
     .anon {
       display: flex;
       align-items: center;
@@ -902,6 +948,10 @@
 
     .viewer-name-pill.show {
       display: inline-flex;
+    }
+
+    .viewer-name-pill.hidden {
+      display: none;
     }
 
     .viewer-note-trigger {
@@ -1068,56 +1118,64 @@
       bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
       z-index: 50;
       min-width: 148px;
-      min-height: 54px;
+      min-height: 52px;
       padding: 0 20px;
       display: inline-flex;
       align-items: center;
       justify-content: flex-start;
       gap: 12px;
       border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.9);
-      color: #0f172a;
-      font-weight: 600;
-      font-size: 0.96rem;
-      letter-spacing: 0.01em;
+      border: 1px solid rgba(255, 255, 255, 0.88);
+      color: rgba(15, 23, 42, 0.92);
+      font-weight: 650;
+      font-size: 0.9rem;
+      letter-spacing: -0.01em;
       background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.62));
-      backdrop-filter: blur(42px) saturate(1.55);
-      -webkit-backdrop-filter: blur(42px) saturate(1.55);
+        linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.54));
+      backdrop-filter: blur(34px) saturate(1.35);
+      -webkit-backdrop-filter: blur(34px) saturate(1.35);
       box-shadow:
-        0 18px 38px rgba(15, 23, 42, 0.14),
+        0 14px 30px rgba(15, 23, 42, 0.12),
         inset 0 1px 0 rgba(255, 255, 255, 0.96),
-        inset 0 -1px 0 rgba(255, 255, 255, 0.42);
+        inset 0 -1px 0 rgba(255, 255, 255, 0.32);
       cursor: pointer;
-      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease;
     }
 
     .fab-upload::before {
       content: "+";
-      width: 26px;
-      height: 26px;
+      width: 24px;
+      height: 24px;
       display: inline-grid;
       place-items: center;
       border-radius: 999px;
-      background: rgba(15, 23, 42, 0.07);
-      color: #0f172a;
-      font-size: 16px;
-      font-weight: 500;
+      background: rgba(15, 23, 42, 0.05);
+      color: rgba(15, 23, 42, 0.84);
+      font-size: 14px;
+      font-weight: 400;
       box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.7),
-        0 1px 2px rgba(15, 23, 42, 0.06);
+        inset 0 1px 0 rgba(255, 255, 255, 0.72),
+        0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    .fab-upload div {
+      position: relative;
+      top: -0.5px;
     }
 
     .fab-upload:hover {
       transform: translateY(-1px);
       box-shadow:
-        0 20px 42px rgba(15, 23, 42, 0.16),
+        0 16px 34px rgba(15, 23, 42, 0.14),
         inset 0 1px 0 rgba(255, 255, 255, 0.98),
-        inset 0 -1px 0 rgba(255, 255, 255, 0.44);
+        inset 0 -1px 0 rgba(255, 255, 255, 0.36);
     }
 
     .fab-upload:active {
-      transform: translateY(0) scale(0.985);
+      transform: translateY(0) scale(0.975);
+      box-shadow:
+        0 10px 20px rgba(15, 23, 42, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.94);
     }
 
     .footer-note {
@@ -1259,7 +1317,7 @@
       }
 
       .wheel-wrap {
-        width: min(100%, 260px);
+        width: min(100%, 274px);
       }
 
       .summary-copy h1 {
@@ -1268,8 +1326,18 @@
 
       .fab-upload {
         right: 12px;
-        left: 12px;
-        min-width: 0;
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 14px);
+        min-width: 132px;
+        min-height: 46px;
+        padding: 0 17px;
+        gap: 10px;
+        font-size: 0.86rem;
+      }
+
+      .fab-upload::before {
+        width: 21px;
+        height: 21px;
+        font-size: 13px;
       }
     }
   </style>
@@ -1413,6 +1481,7 @@
 
   <input type="file" accept="image/*" capture="environment" id="uploadCamera" hidden>
   <input type="file" accept="image/*" id="uploadGallery" hidden>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
@@ -1432,6 +1501,8 @@
     let currentIndex = 0;
     let tempFile = null;
     let isSwiping = false;
+    const flipTimers = new WeakMap();
+    const flipIntervals = new WeakMap();
 
     const firebaseConfig = {
       apiKey: "AIzaSyBQTeEhNmzK-zls5oe6sRAEyC05WBIYX40",
@@ -1473,7 +1544,13 @@
     const viewerNoteTrigger = document.getElementById("viewerNoteTrigger");
     const viewerNoteClose = document.getElementById("viewerNoteClose");
     const modal = document.getElementById("modal");
-    const eventoID = "sofia-xv";
+    const toast = document.getElementById("toast");
+    const eventoParam = new URLSearchParams(window.location.search).get("evento");
+    const eventoID = (eventoParam || "sofia-xv")
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9-]+/g, "-")
+      .replace(/^-+|-+$/g, "") || "sofia-xv";
     const wheelOptions = [
       {
         label: "Spot bonito",
@@ -1506,6 +1583,7 @@
     ];
     let wheelRotation = 0;
     let wheelSpinning = false;
+    let toastTimer = null;
     const wheelColors = ["#dbeafe", "#eff6ff", "#e0f2fe", "#f3f4f6", "#e9d5ff", "#fee2e2", "#dcfce7"];
 
     function renderWheelBackground() {
@@ -1533,7 +1611,7 @@
         text.textContent = option.label;
         const angleDeg = index * slice;
         const angleRad = (angleDeg * Math.PI) / 180;
-        const radius = 90;
+        const radius = 98;
         const x = Math.sin(angleRad) * radius;
         const y = -Math.cos(angleRad) * radius;
 
@@ -1570,6 +1648,98 @@
     function updateCounter() {
       const counter = document.getElementById("counter");
       counter.innerText = galleryImages.length ? `${currentIndex + 1} / ${galleryImages.length}` : "0 / 0";
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2400);
+    }
+
+    async function compressImage(file) {
+      if (!file || !file.type.startsWith("image/")) return file;
+
+      const dataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+
+      const image = await new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = dataUrl;
+      });
+
+      const maxSide = 1600;
+      const scale = Math.min(1, maxSide / Math.max(image.width, image.height));
+      const width = Math.round(image.width * scale);
+      const height = Math.round(image.height * scale);
+
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(image, 0, 0, width, height);
+
+      const blob = await new Promise((resolve) => {
+        canvas.toBlob(resolve, "image/jpeg", 0.82);
+      });
+
+      if (!blob) return file;
+
+      const compressedName = file.name.replace(/\.[^.]+$/, "") + ".jpg";
+      return new File([blob], compressedName, {
+        type: "image/jpeg",
+        lastModified: Date.now()
+      });
+    }
+
+    function clearFlipAutoClose(card) {
+      const timeoutId = flipTimers.get(card);
+      const intervalId = flipIntervals.get(card);
+
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+        flipTimers.delete(card);
+      }
+
+      if (intervalId) {
+        clearInterval(intervalId);
+        flipIntervals.delete(card);
+      }
+
+      card.classList.remove("is-counting");
+      card.style.removeProperty("--flip-progress");
+    }
+
+    function startFlipAutoClose(card) {
+      clearFlipAutoClose(card);
+
+      const duration = 12000;
+      const startedAt = Date.now();
+      card.classList.add("is-counting");
+      card.style.setProperty("--flip-progress", "0");
+
+      const intervalId = setInterval(() => {
+        const elapsed = Date.now() - startedAt;
+        const progress = Math.min(100, (elapsed / duration) * 100);
+        card.style.setProperty("--flip-progress", progress.toFixed(2));
+      }, 120);
+
+      const timeoutId = setTimeout(() => {
+        clearFlipAutoClose(card);
+        card.classList.remove("is-flipped");
+      }, duration);
+
+      flipIntervals.set(card, intervalId);
+      flipTimers.set(card, timeoutId);
     }
 
     renderWheelBackground();
@@ -1623,6 +1793,7 @@
         viewerOverlayName.textContent = "";
         viewerMessage.textContent = "";
         viewerName.classList.remove("show");
+        viewerName.classList.remove("hidden");
         viewerDedication.classList.remove("show");
         viewerNoteTrigger.classList.remove("show");
         viewer.classList.remove("note-open");
@@ -1659,6 +1830,7 @@
       viewerDedication.classList.remove("show");
       viewer.classList.remove("note-open");
       viewerNoteTrigger.classList.remove("hidden");
+      viewerName.classList.remove("hidden");
     }
 
     function nextImage() {
@@ -1799,12 +1971,14 @@
       viewerDedication.classList.add("show");
       viewer.classList.add("note-open");
       viewerNoteTrigger.classList.add("hidden");
+      viewerName.classList.add("hidden");
     });
 
     viewerNoteClose.addEventListener("click", () => {
       viewerDedication.classList.remove("show");
       viewer.classList.remove("note-open");
       viewerNoteTrigger.classList.remove("hidden");
+      viewerName.classList.remove("hidden");
     });
 
     function handleSelectedFile(event) {
@@ -1859,10 +2033,11 @@
       const dedicatoria = messageInput.value.trim();
 
       try {
-        const fileName = Date.now() + "_" + tempFile.name;
+        const processedFile = await compressImage(tempFile);
+        const fileName = `${Date.now()}_${processedFile.name}`;
         const storageRef = storage.ref("galeria/" + fileName);
 
-        await storageRef.put(tempFile);
+        await storageRef.put(processedFile);
         const url = await storageRef.getDownloadURL();
 
         await db.collection("galeria")
@@ -1886,6 +2061,7 @@
         uploadCameraInput.value = "";
         uploadGalleryInput.value = "";
         tempFile = null;
+        showToast("Foto subida con exito");
       } catch (error) {
         console.error(error);
         confirmBtn.disabled = false;
@@ -1994,10 +2170,12 @@
             frontFlip.onclick = (event) => {
               event.stopPropagation();
               card.classList.add("is-flipped");
+              startFlipAutoClose(card);
             };
 
             backFlip.onclick = (event) => {
               event.stopPropagation();
+              clearFlipAutoClose(card);
               card.classList.remove("is-flipped");
             };
 
